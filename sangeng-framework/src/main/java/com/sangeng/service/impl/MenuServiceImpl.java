@@ -7,6 +7,7 @@ import com.sangeng.domain.entity.Menu;
 import com.sangeng.mapper.MenuMapper;
 import com.sangeng.service.MenuService;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -50,6 +51,16 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
 
         List<Menu> menuTree = builderMenuTree(menus,0L);
         return menuTree;
+    }
+
+    @Override
+    public List<Menu> selectMenuList(Menu menu) {
+        LambdaQueryWrapper<Menu> menuLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        menuLambdaQueryWrapper.like(StringUtils.hasText(menu.getMenuName()),Menu::getMenuName,menu.getMenuName());
+        menuLambdaQueryWrapper.eq(StringUtils.hasText(menu.getStatus()),Menu::getStatus,menu.getStatus());
+        menuLambdaQueryWrapper.orderByAsc(Menu::getParentId,Menu::getOrderNum);
+        List<Menu> menuList = list(menuLambdaQueryWrapper);
+        return menuList;
     }
 
     private List<Menu> builderMenuTree(List<Menu> menus, long parentId) {

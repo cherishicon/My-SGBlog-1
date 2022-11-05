@@ -187,7 +187,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     }
 
     @Override
-    public void edit(ArticleDto articleDto) {
+    public void edit(ArticleVo articleDto) {
         Article article = BeanCopyUtils.copyBean(articleDto,Article.class);
         updateById(article);
         //移除旧的标签与文章的关联

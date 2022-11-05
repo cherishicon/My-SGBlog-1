@@ -37,10 +37,10 @@ public class ArticleController {
     }
 
     @PutMapping
-    public ResponseResult updateArticle(@RequestBody ArticleDto articleDto){
+    public ResponseResult updateArticle(@RequestBody ArticleVo articleVo){
 //        Article article = BeanCopyUtils.copyBean(articleDto, Article.class);
 //        articleService.updateById(article);
-        articleService.edit(articleDto);
+        articleService.edit(articleVo);
         return ResponseResult.okResult();
     }
 
