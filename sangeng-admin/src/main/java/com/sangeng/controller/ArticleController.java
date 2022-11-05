@@ -2,10 +2,12 @@ package com.sangeng.controller;
 
 import com.sangeng.domain.ResponseResult;
 import com.sangeng.domain.dto.AddArticleDto;
+import com.sangeng.domain.dto.ArticleDto;
 import com.sangeng.domain.entity.Article;
 import com.sangeng.domain.vo.ArticleVo;
 import com.sangeng.domain.vo.PageVo;
 import com.sangeng.service.ArticleService;
+import com.sangeng.utils.BeanCopyUtils;
 import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -35,8 +37,16 @@ public class ArticleController {
     }
 
     @PutMapping
-    public ResponseResult updateArticle(@RequestBody ArticleVo articleVo){
-        
+    public ResponseResult updateArticle(@RequestBody ArticleDto articleDto){
+//        Article article = BeanCopyUtils.copyBean(articleDto, Article.class);
+//        articleService.updateById(article);
+        articleService.edit(articleDto);
+        return ResponseResult.okResult();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseResult deleteArticle(@PathVariable Long id){
+        articleService.removeById(id);
         return ResponseResult.okResult();
     }
 }
