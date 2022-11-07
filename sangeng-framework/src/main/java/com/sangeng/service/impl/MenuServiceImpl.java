@@ -4,9 +4,12 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sangeng.constants.SystemConstants;
 import com.sangeng.domain.entity.Menu;
+import com.sangeng.domain.entity.RoleMenu;
 import com.sangeng.domain.vo.MenuTreeVo;
 import com.sangeng.mapper.MenuMapper;
 import com.sangeng.service.MenuService;
+import com.sangeng.service.RoleMenuService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -22,6 +25,9 @@ import java.util.stream.Collectors;
  */
 @Service("menuService")
 public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements MenuService {
+
+    @Autowired
+    private RoleMenuService roleMenuService;
 
     @Override
     public List<String> selectPermsByUserId(Long id) {
@@ -103,5 +109,17 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
                                                    .map(menuTreeVo1 -> menuTreeVo1.setChildren(getChildrenList(menuTreeVos,menuTreeVo1)))
                                                    .collect(Collectors.toList());
         return childrenList;
+    }
+
+    @Override
+    public List<Long> checkedKeysList(Long roleId) {
+
+        LambdaQueryWrapper<RoleMenu> roleMenuLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        roleMenuLambdaQueryWrapper.eq(RoleMenu::getRoleId,roleId);
+        List<RoleMenu> roleMenus = roleMenuService.list(roleMenuLambdaQueryWrapper);
+        List<Long> theCheckedKeysList = roleMenus.stream()
+                                                .map(RoleMenu::getMenuId)
+                                                .collect(Collectors.toList());
+        return theCheckedKeysList;
     }
 }

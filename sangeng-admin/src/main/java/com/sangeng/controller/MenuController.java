@@ -3,9 +3,11 @@ package com.sangeng.controller;
 
 import com.sangeng.domain.ResponseResult;
 import com.sangeng.domain.entity.Menu;
+import com.sangeng.domain.entity.RoleMenu;
 import com.sangeng.domain.vo.MenuTreeVo;
 import com.sangeng.domain.vo.MenuVo;
 import com.sangeng.domain.vo.MenuVo2;
+import com.sangeng.domain.vo.RoleMenuTreeSelectVo;
 import com.sangeng.service.MenuService;
 import com.sangeng.utils.BeanCopyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,5 +72,17 @@ public class MenuController {
         List<Menu> menus = menuService.selectMenuList(new Menu());
         List<MenuTreeVo> menuTreeVos = menuService.selectTreeSelect(menus);
         return ResponseResult.okResult(menuTreeVos);
+    }
+
+    @GetMapping("/roleMenuTreeselect/{id}")
+    public ResponseResult getMenuTree(@PathVariable("id") Long roleId){
+        List<Menu> menus = menuService.selectMenuList(new Menu());
+        List<MenuTreeVo> menuTreeVos = menuService.selectTreeSelect(menus);
+
+
+
+        List<Long> checkedKeys = menuService.checkedKeysList(roleId);
+        RoleMenuTreeSelectVo roleMenuTreeSelectVo = new RoleMenuTreeSelectVo(checkedKeys,menuTreeVos);
+        return ResponseResult.okResult(roleMenuTreeSelectVo);
     }
 }

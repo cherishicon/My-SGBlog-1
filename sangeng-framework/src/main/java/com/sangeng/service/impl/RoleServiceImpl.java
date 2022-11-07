@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sangeng.constants.SystemConstants;
 import com.sangeng.domain.dto.AddRoleDto;
 import com.sangeng.domain.dto.ChangeRoleStatusDto;
+import com.sangeng.domain.dto.UpdateRoleDto;
 import com.sangeng.domain.entity.Role;
 import com.sangeng.domain.entity.RoleMenu;
 import com.sangeng.domain.vo.PageVo;
@@ -79,4 +80,17 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
                                         .collect(Collectors.toList());
         roleMenuService.saveBatch(roleMenus);
     }
+
+    @Override
+    public void updateRole(UpdateRoleDto updateRoleDto) {
+        Role role = BeanCopyUtils.copyBean(updateRoleDto, Role.class);
+        updateById(role);
+        List<Long> menuIds = updateRoleDto.getMenuIds();
+        List<RoleMenu> roleMenus = menuIds.stream()
+                .map(menuId -> new RoleMenu(role.getId(), menuId))
+                .collect(Collectors.toList());
+        roleMenuService.deleteRoleMenuByRoleId(role.getId());
+        roleMenuService.saveBatch(roleMenus);
+    }
+
 }

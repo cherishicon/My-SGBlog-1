@@ -24,4 +24,6 @@ public interface MenuService extends IService<Menu> {
     boolean hasChild(Long menuId);
 
     List<MenuTreeVo> selectTreeSelect(List<Menu> menus);
+
+    List<Long> checkedKeysList(Long roleId);
 }
