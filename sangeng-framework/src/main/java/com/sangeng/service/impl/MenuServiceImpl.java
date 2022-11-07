@@ -4,12 +4,14 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sangeng.constants.SystemConstants;
 import com.sangeng.domain.entity.Menu;
+import com.sangeng.domain.vo.MenuTreeVo;
 import com.sangeng.mapper.MenuMapper;
 import com.sangeng.service.MenuService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -80,6 +82,26 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
                 .filter(m -> m.getParentId().equals(menu.getId()))
                 .map(m -> m.setChildren(getChildren(m, menus)))
                 .collect(Collectors.toList());
+        return childrenList;
+    }
+
+    @Override
+    public List<MenuTreeVo> selectTreeSelect(List<Menu> menus) {
+        List<MenuTreeVo> menuTreeVos = menus.stream()
+                                            .map(menu -> new MenuTreeVo(menu.getId(),menu.getMenuName(),menu.getParentId(),null))
+                                            .collect(Collectors.toList());
+        List<MenuTreeVo> childrenList = menuTreeVos.stream()
+                                                   .filter(o -> o.getParentId().equals(0L))
+                                                   .map(menuTreeVo -> menuTreeVo.setChildren(getChildrenList(menuTreeVos, menuTreeVo)))
+                                                   .collect(Collectors.toList());
+        return childrenList;
+    }
+
+    private List<MenuTreeVo> getChildrenList(List<MenuTreeVo> menuTreeVos,MenuTreeVo menuTreeVo) {
+        List<MenuTreeVo> childrenList = menuTreeVos.stream()
+                                                   .filter(menuTreeVo1 -> Objects.equals(menuTreeVo1.getParentId(),menuTreeVo.getId()))
+                                                   .map(menuTreeVo1 -> menuTreeVo1.setChildren(getChildrenList(menuTreeVos,menuTreeVo1)))
+                                                   .collect(Collectors.toList());
         return childrenList;
     }
 }

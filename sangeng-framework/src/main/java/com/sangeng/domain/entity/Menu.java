@@ -26,6 +26,12 @@ import lombok.experimental.Accessors;
 @TableName("sys_menu")
 @Accessors(chain = true)
 public class Menu  {
+
+    public Menu(String status,String menuName){
+        this.status = status;
+        this.menuName = menuName;
+    }
+
     //菜单ID@TableId
     private Long id;
 

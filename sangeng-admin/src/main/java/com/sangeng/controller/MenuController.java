@@ -3,6 +3,7 @@ package com.sangeng.controller;
 
 import com.sangeng.domain.ResponseResult;
 import com.sangeng.domain.entity.Menu;
+import com.sangeng.domain.vo.MenuTreeVo;
 import com.sangeng.domain.vo.MenuVo;
 import com.sangeng.domain.vo.MenuVo2;
 import com.sangeng.service.MenuService;
@@ -63,5 +64,11 @@ public class MenuController {
         return ResponseResult.okResult();
     }
 
-
+    @GetMapping("/treeselect")
+    public ResponseResult getTreeSelect(){
+        //复用之前的selectMenuList方法。方法需要参数，参数可以用来进行条件查询，而这个方法不需要条件，所以直接new Menu()传入
+        List<Menu> menus = menuService.selectMenuList(new Menu());
+        List<MenuTreeVo> menuTreeVos = menuService.selectTreeSelect(menus);
+        return ResponseResult.okResult(menuTreeVos);
+    }
 }
