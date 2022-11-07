@@ -1,6 +1,7 @@
 package com.sangeng.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.sangeng.domain.dto.AddRoleDto;
 import com.sangeng.domain.dto.ChangeRoleStatusDto;
 import com.sangeng.domain.entity.Role;
 import com.sangeng.domain.vo.PageVo;
@@ -22,4 +23,6 @@ public interface RoleService extends IService<Role> {
 
 
     void changeStatus(ChangeRoleStatusDto roleStatusDto);
+
+    void insertRole(AddRoleDto addRoleDto);
 }
