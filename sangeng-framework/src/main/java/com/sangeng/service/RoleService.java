@@ -1,7 +1,9 @@
 package com.sangeng.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.sangeng.domain.dto.ChangeRoleStatusDto;
 import com.sangeng.domain.entity.Role;
+import com.sangeng.domain.vo.PageVo;
 
 import java.util.List;
 
@@ -14,5 +16,10 @@ import java.util.List;
  */
 public interface RoleService extends IService<Role> {
 
+    PageVo getRoleList(Role role, Integer pageNum, Integer pageSize);
+
     List<String> selectRoleKeyByUserId(Long id);
+
+
+    void changeStatus(ChangeRoleStatusDto roleStatusDto);
 }

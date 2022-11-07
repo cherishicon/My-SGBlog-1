@@ -54,4 +54,14 @@ public class MenuController {
         return ResponseResult.okResult();
     }
 
+    @DeleteMapping("/{menuId}")
+    public ResponseResult deleteMenu(@PathVariable Long menuId){
+        if(menuService.hasChild(menuId)){
+            return ResponseResult.errorResult(500,"无法删除菜单：" + menuService.getById(menuId).getMenuName() + "存在子菜单不允许删除");
+        }
+        menuService.removeById(menuId);
+        return ResponseResult.okResult();
+    }
+
+
 }

@@ -47,8 +47,6 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
             //否则  获取当前用户所具有的Menu
             menus = menuMapper.selectRouterMenuTreeByUserId(userId);
         }
-
-
         List<Menu> menuTree = builderMenuTree(menus,0L);
         return menuTree;
     }
@@ -61,6 +59,13 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
         menuLambdaQueryWrapper.orderByAsc(Menu::getParentId,Menu::getOrderNum);
         List<Menu> menuList = list(menuLambdaQueryWrapper);
         return menuList;
+    }
+
+    @Override
+    public boolean hasChild(Long menuId) {
+        LambdaQueryWrapper<Menu> menuLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        menuLambdaQueryWrapper.eq(Menu::getId,menuId);
+        return count(menuLambdaQueryWrapper) != 0;
     }
 
     private List<Menu> builderMenuTree(List<Menu> menus, long parentId) {
