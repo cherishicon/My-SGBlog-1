@@ -1,6 +1,7 @@
 package com.sangeng.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sangeng.constants.SystemConstants;
@@ -91,6 +92,14 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
                 .collect(Collectors.toList());
         roleMenuService.deleteRoleMenuByRoleId(role.getId());
         roleMenuService.saveBatch(roleMenus);
+    }
+
+    @Override
+    public List<Role> selectAllRole() {
+        LambdaQueryWrapper<Role> roleLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        roleLambdaQueryWrapper.eq(Role::getStatus,SystemConstants.NORMAL);
+        List<Role> roles = list(roleLambdaQueryWrapper);
+        return roles;
     }
 
 }

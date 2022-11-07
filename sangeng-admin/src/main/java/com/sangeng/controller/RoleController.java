@@ -13,6 +13,8 @@ import com.sangeng.utils.BeanCopyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/system/role")
 public class RoleController {
@@ -58,5 +60,11 @@ public class RoleController {
         roleService.removeById(id);
         roleMenuService.deleteRoleMenuByRoleId(id);
         return ResponseResult.okResult();
+    }
+
+    @GetMapping("/listAllRole")
+    public ResponseResult allRoleList(){
+        List<Role> roles = roleService.selectAllRole();
+        return ResponseResult.okResult(roles);
     }
 }
