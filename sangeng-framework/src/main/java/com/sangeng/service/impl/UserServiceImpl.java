@@ -5,14 +5,19 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sangeng.domain.ResponseResult;
 import com.sangeng.domain.dto.AddUserDto;
+import com.sangeng.domain.dto.UpdateUserDto;
+import com.sangeng.domain.entity.Role;
+import com.sangeng.domain.entity.RoleMenu;
 import com.sangeng.domain.entity.User;
 import com.sangeng.domain.entity.UserRole;
 import com.sangeng.domain.vo.PageVo;
+import com.sangeng.domain.vo.UserInfoAndRoleIdsVo;
 import com.sangeng.domain.vo.UserInfoVo;
 import com.sangeng.domain.vo.UserVo;
 import com.sangeng.enums.AppHttpCodeEnum;
 import com.sangeng.exception.SystemException;
 import com.sangeng.mapper.UserMapper;
+import com.sangeng.service.RoleService;
 import com.sangeng.service.UserRoleService;
 import com.sangeng.service.UserService;
 import com.sangeng.utils.BeanCopyUtils;
@@ -39,6 +44,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Autowired
     private UserRoleService userRoleService;
+
+    @Autowired
+    private RoleService roleService;
 
     @Override
     public ResponseResult userInfo() {
@@ -142,10 +150,49 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return count(userLambdaQueryWrapper) != 0;
     }
 
+    @Override
+    public void removeUserRole(Long id) {
+        LambdaQueryWrapper<UserRole> userRoleLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        userRoleLambdaQueryWrapper.eq(UserRole::getUserId,id);
+        userRoleService.remove(userRoleLambdaQueryWrapper);
+    }
+
+    @Override
+    public UserInfoAndRoleIdsVo getUserAndRoleInfo(Long userId) {
+        User user = getById(userId);
+
+        LambdaQueryWrapper<UserRole> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(UserRole::getUserId,userId);
+        List<UserRole> userRoleList = userRoleService.list(queryWrapper);
+        List<Long> roleIds = userRoleList.stream()
+                                        .map(UserRole::getRoleId)
+                                        .collect(Collectors.toList());
+        List<Role> roles = roleService.selectAllRole();
+
+        UserInfoAndRoleIdsVo userInfoAndRoleIdsVo = new UserInfoAndRoleIdsVo(user,roles,roleIds);
+        return userInfoAndRoleIdsVo;
+    }
+
+    @Override
+    public void updateUser(UpdateUserDto updateUserDto) {
+        User user = BeanCopyUtils.copyBean(updateUserDto, User.class);
+        updateById(user);
+
+        List<Long> roleIds = updateUserDto.getRoleIds();
+        List<UserRole> userRoles = roleIds.stream()
+                                          .map(roleId -> new UserRole(user.getId(), roleId))
+                                          .collect(Collectors.toList());
+        LambdaQueryWrapper<UserRole> urQueryWrapper = new LambdaQueryWrapper<>();
+        urQueryWrapper.eq(UserRole::getUserId,user.getId());
+        userRoleService.remove(urQueryWrapper);
+        userRoleService.saveBatch(userRoles);
+    }
+
+
     private boolean nickNameExist(String nickName) {
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(User::getNickName,nickName);
-        return count(queryWrapper)>0;
+        return count(queryWrapper) > 0;
     }
 
     private boolean userNameExist(String userName) {

@@ -3,20 +3,18 @@ package com.sangeng.controller;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.fastjson.JSON;
 import com.sangeng.domain.ResponseResult;
+import com.sangeng.domain.dto.AddCategoryDto;
 import com.sangeng.domain.entity.Category;
-import com.sangeng.domain.vo.CategoryVo;
-import com.sangeng.domain.vo.ExcelCategoryVo;
-import com.sangeng.domain.vo.TagVo;
+import com.sangeng.domain.vo.*;
 import com.sangeng.enums.AppHttpCodeEnum;
 import com.sangeng.service.CategoryService;
 import com.sangeng.service.TagService;
 import com.sangeng.utils.BeanCopyUtils;
 import com.sangeng.utils.WebUtils;
+import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -56,5 +54,37 @@ public class CategoryController {
             WebUtils.renderString(response, JSON.toJSONString(result));
         }
     }
-    
+
+    @GetMapping("/list")
+    public ResponseResult listPage(Category category,Integer pageNum,Integer pageSize){
+        PageVo pageVo = categoryService.selectCategoryPage(category,pageNum,pageSize);
+        return ResponseResult.okResult(pageVo);
+    }
+
+    @PostMapping
+    public ResponseResult newCategory(@RequestBody AddCategoryDto addCategoryDto){
+        Category category = BeanCopyUtils.copyBean(addCategoryDto, Category.class);
+        categoryService.save(category);
+        return ResponseResult.okResult();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseResult findCategory(@PathVariable("id") Long categoryId){
+        Category category = categoryService.getById(categoryId);
+        CategoryVo2 categoryVo2 = BeanCopyUtils.copyBean(category, CategoryVo2.class);
+        return ResponseResult.okResult(categoryVo2);
+    }
+
+    @PutMapping
+    public ResponseResult updateCategory(@RequestBody CategoryVo2 categoryVo2){
+        Category category = BeanCopyUtils.copyBean(categoryVo2, Category.class);
+        categoryService.updateById(category);
+        return ResponseResult.okResult();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseResult deleteCategory(@PathVariable("id") Long categoryId){
+        categoryService.removeById(categoryId);
+        return  ResponseResult.okResult();
+    }
 }

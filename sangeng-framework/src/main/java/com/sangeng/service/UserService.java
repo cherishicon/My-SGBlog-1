@@ -3,8 +3,10 @@ package com.sangeng.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.sangeng.domain.ResponseResult;
 import com.sangeng.domain.dto.AddUserDto;
+import com.sangeng.domain.dto.UpdateUserDto;
 import com.sangeng.domain.entity.User;
 import com.sangeng.domain.vo.PageVo;
+import com.sangeng.domain.vo.UserInfoAndRoleIdsVo;
 
 
 /**
@@ -30,4 +32,10 @@ public interface UserService extends IService<User> {
     boolean checkPhoneNumberUnique(AddUserDto addUserDto);
 
     boolean checkEmailUnique(AddUserDto addUserDto);
+
+    void removeUserRole(Long id);
+
+    UserInfoAndRoleIdsVo getUserAndRoleInfo(Long id);
+
+    void updateUser(UpdateUserDto updateUserDto);
 }

@@ -2,8 +2,10 @@ package com.sangeng.controller;
 
 import com.sangeng.domain.ResponseResult;
 import com.sangeng.domain.dto.AddUserDto;
+import com.sangeng.domain.dto.UpdateUserDto;
 import com.sangeng.domain.entity.User;
 import com.sangeng.domain.vo.PageVo;
+import com.sangeng.domain.vo.UserInfoAndRoleIdsVo;
 import com.sangeng.enums.AppHttpCodeEnum;
 import com.sangeng.exception.SystemException;
 import com.sangeng.service.UserService;
@@ -41,4 +43,25 @@ public class UserController {
         userService.addNewUser(addUserDto);
         return ResponseResult.okResult();
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseResult deleteUser(@PathVariable("id") Long id){
+        userService.removeById(id);
+        userService.removeUserRole(id);
+        return ResponseResult.okResult();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseResult getUserRoleInfo(@PathVariable("id") Long userId){
+        UserInfoAndRoleIdsVo userInfoAndRoleIdsVo = userService.getUserAndRoleInfo(userId);
+        return ResponseResult.okResult(userInfoAndRoleIdsVo);
+    }
+
+    @PutMapping
+    public ResponseResult updateUserInfo(@RequestBody UpdateUserDto updateUserDto){
+        userService.updateUser(updateUserDto);
+        return ResponseResult.okResult();
+    }
+
+
 }
